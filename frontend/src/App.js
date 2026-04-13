@@ -10,25 +10,36 @@ import Services from "@/pages/Services";
 import ServiceDetails from "@/pages/ServiceDetails";
 import Cart from "@/pages/Cart";
 import About from "@/pages/About";
+import { AuthProvider } from "@/context/AuthContext";
+import { BookingProvider } from "@/context/BookingContext";
+import MyBookings from "@/pages/MyBookings";
 
 function App() {
   return (
+    <AuthProvider>
+      <BookingProvider>
     <CartProvider>
       <BrowserRouter>
         <div className="App">
           <Navbar />
+                    <main className="main-content">
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />
             <Route path="/service/:id" element={<ServiceDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/about" element={<About />} />
+            <Route path="/bookings" element={<MyBookings />} />
           </Routes>
+          </main>
           <Footer />
           <Toaster />
         </div>
       </BrowserRouter>
     </CartProvider>
+    </BookingProvider>
+    </AuthProvider>
   );
 }
 

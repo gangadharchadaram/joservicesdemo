@@ -120,37 +120,7 @@ const ServiceDetails = () => {
             </Card>
 
             {/* Our Professionals */}
-            <Card className="backdrop-blur-xl bg-white/90 border border-blue-100 shadow-xl">
-              <CardHeader>
-                <CardTitle>Our Professionals</CardTitle>
-                <CardDescription>Verified and experienced experts</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {categoryProfessionals.map((professional) => (
-                    <div key={professional.id} className="backdrop-blur-lg bg-white/80 rounded-lg p-4 border border-blue-100 hover:shadow-lg transition-all duration-300">
-                      <div className="flex items-center space-x-4">
-                        <img 
-                          src={professional.image} 
-                          alt={professional.name}
-                          className="h-16 w-16 rounded-full border-2 border-blue-200"
-                        />
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900">{professional.name}</h4>
-                          <div className="flex items-center space-x-1 mt-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{professional.rating}</span>
-                          </div>
-                          <div className="text-xs text-gray-600 mt-1">
-                            {professional.completedJobs} jobs • {professional.experience}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+           
           </div>
 
           {/* Booking Sidebar */}

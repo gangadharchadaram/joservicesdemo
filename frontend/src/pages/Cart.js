@@ -5,6 +5,10 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { useCart } from '../context/CartContext';
 import { serviceCategories } from '../mockData';
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useBooking } from "../context/BookingContext";
+
 
 const Cart = () => {
   const { cartItems, removeFromCart, clearCart, getTotalPrice } = useCart();
@@ -12,29 +16,64 @@ const Cart = () => {
   const getCategoryName = (categoryId) => {
     return serviceCategories.find(cat => cat.id === categoryId)?.name || '';
   };
-
-  const handleCheckout = () => {
-    alert('Booking confirmed! You will receive a confirmation message shortly.');
-    clearCart();
-  };
-
-  if (cartItems.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
-        <div className="text-center backdrop-blur-xl bg-white/90 rounded-3xl p-12 max-w-md border border-blue-100 shadow-xl">
-          <ShoppingBag className="h-24 w-24 text-gray-300 mx-auto mb-6" />
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Your Cart is Empty</h2>
-          <p className="text-gray-600 mb-8">Add some services to get started</p>
-          <Link to="/services">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg" size="lg">
-              Browse Services <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
+const handleCheckout = () => {
+  if (!address) {
+    alert("Please enter service address");
+    return;
   }
 
+  const booking = {
+    id: Date.now(),
+    items: cartItems,
+    total: getTotalPrice() - discount,
+    address,
+    user,
+    status: "Confirmed",
+    date: new Date().toLocaleString()
+  };
+
+  addBooking(booking);
+
+  setShowSuccess(true);
+  clearCart();
+};
+
+  const [coupon, setCoupon] = useState("");
+const [discount, setDiscount] = useState(0);
+const [address, setAddress] = useState("");
+const [showSuccess, setShowSuccess] = useState(false);
+const { user } = useAuth();
+const isLoggedIn = !!user;
+const { addBooking } = useBooking();
+
+const applyCoupon = () => {
+  if (coupon === "SAVE100") {
+    setDiscount(100);
+  } else if (coupon === "JO50") {
+    setDiscount(50);
+  } else {
+    alert("Invalid coupon");
+    setDiscount(0);
+  }
+};
+
+  if (cartItems.length === 0 && !showSuccess) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+      <div className="text-center backdrop-blur-xl bg-white/90 rounded-3xl p-12 max-w-md border border-blue-100 shadow-xl">
+        <ShoppingBag className="h-24 w-24 text-gray-300 mx-auto mb-6" />
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Your Cart is Empty
+        </h2>
+        <Link to="/services">
+          <Button className="bg-blue-600 text-white">
+            Browse Services
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,6 +106,53 @@ const Cart = () => {
                         </div>
                       </div>
 
+
+              {/* Address */}
+<div className="border rounded-xl p-4 bg-white shadow-sm">
+  <h3 className="font-semibold mb-2">Service Address</h3>
+
+  <textarea
+    value={address}
+    onChange={(e) => setAddress(e.target.value)}
+    placeholder="Enter your full address"
+    className="w-full border rounded-lg px-3 py-2 h-24"
+  />
+
+  <button
+    onClick={() =>
+      setAddress("Flat 203, Sai Residency, Madhapur, Hyderabad")
+    }
+    className="text-blue-600 text-sm mt-2"
+  >
+    Use saved address
+  </button>
+</div>
+                      {/* Coupons */}
+<div className="border rounded-xl p-4 bg-white shadow-sm">
+  <h3 className="font-semibold mb-2">Coupons and offers</h3>
+
+  <div className="flex gap-2">
+    <input
+      value={coupon}
+      onChange={(e) => setCoupon(e.target.value)}
+      placeholder="Enter coupon code"
+      className="flex-1 border rounded-lg px-3 py-2"
+    />
+
+    <button
+      onClick={applyCoupon}
+      className="bg-blue-600 text-white px-4 rounded-lg"
+    >
+      Apply
+    </button>
+  </div>
+
+  {discount > 0 && (
+    <div className="text-green-600 text-sm mt-2">
+      Saving ₹{discount} on this order
+    </div>
+  )}
+</div>
                       <div className="text-2xl font-bold text-blue-600">₹{item.price}</div>
                     </div>
 
@@ -94,46 +180,143 @@ const Cart = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <Card className="backdrop-blur-xl bg-white/90 border border-blue-100 shadow-xl sticky top-20">
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Items ({cartItems.length})</span>
-                    <span>₹{getTotalPrice()}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>Service Fee</span>
-                    <span className="text-green-600">FREE</span>
-                  </div>
-                  <div className="border-t border-blue-100 pt-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-gray-900">Total</span>
-                      <span className="text-3xl font-bold text-blue-600">₹{getTotalPrice()}</span>
-                    </div>
-                  </div>
-                </div>
+  <Card className="backdrop-blur-xl bg-white/90 border border-blue-100 shadow-xl sticky top-20">
+    <CardHeader>
+      <CardTitle>Order Summary</CardTitle>
+    </CardHeader>
 
-                <Button 
-                  onClick={handleCheckout}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
-                  size="lg"
-                >
-                  Confirm Booking
-                </Button>
+    <CardContent className="space-y-4">
 
-                <div className="backdrop-blur-lg bg-blue-50/50 rounded-lg p-4 border border-blue-100">
-                  <p className="text-sm text-gray-700">
-                    <strong>Note:</strong> A professional will be assigned to you after booking confirmation.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+      {/* Address */}
+      {isLoggedIn && (
+        <div className="border rounded-xl p-4 bg-white shadow-sm">
+          <h3 className="font-semibold mb-2">Service Address</h3>
+
+          <textarea
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Enter your full address"
+            className="w-full border rounded-lg px-3 py-2 h-24"
+          />
+
+          <button
+            onClick={() =>
+              setAddress("Flat 203, Sai Residency, Madhapur, Hyderabad")
+            }
+            className="text-blue-600 text-sm mt-2"
+          >
+            Use saved address
+          </button>
+        </div>
+      )}
+
+      {/* price summary */}
+      <div className="space-y-3">
+        <div className="flex justify-between text-gray-600">
+          <span>Items ({cartItems.length})</span>
+          <span>₹{getTotalPrice() - discount}</span>
+        </div>
+
+        <div className="flex justify-between text-gray-600">
+          <span>Service Fee</span>
+          <span className="text-green-600">FREE</span>
+        </div>
+
+        {/* address display */}
+        {address && (
+          <div className="text-sm text-gray-600 border-t border-blue-100 pt-3">
+            <strong>Service Address:</strong>
+            <div className="mt-1">{address}</div>
+          </div>
+        )}
+
+        {/* total */}
+        <div className="border-t border-blue-100 pt-3">
+          <div className="flex justify-between items-center">
+            <span className="text-lg font-semibold text-gray-900">
+              Total
+            </span>
+            <span className="text-3xl font-bold text-blue-600">
+              ₹{getTotalPrice() - discount}
+            </span>
           </div>
         </div>
       </div>
+
+      {/* login required */}
+      {!isLoggedIn ? (
+        <div className="border rounded-xl p-4 bg-white shadow-sm">
+          <h3 className="font-semibold mb-1">Account</h3>
+          <p className="text-sm text-gray-500 mb-3">
+            To book the service, please login or sign up
+          </p>
+
+          <button
+            onClick={() => window.dispatchEvent(new Event("openLogin"))}
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 rounded-lg"
+          >
+            Login
+          </button>
+        </div>
+      ) : (
+        <Button
+          onClick={handleCheckout}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+          size="lg"
+        >
+          Confirm Booking
+        </Button>
+      )}
+
+      {/* note */}
+      <div className="backdrop-blur-lg bg-blue-50/50 rounded-lg p-4 border border-blue-100">
+        <p className="text-sm text-gray-700">
+          <strong>Note:</strong> A professional will be assigned to you after booking confirmation.
+        </p>
+      </div>
+
+    </CardContent>
+  </Card>
+</div>
+        </div>
+      </div>
+      {showSuccess && (
+  <div className="fixed inset-0 z-[9999] backdrop-blur-md bg-black/30 flex items-center justify-center p-4">
+
+    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center">
+
+      {/* icon */}
+      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        ✓
+      </div>
+
+      <h2 className="text-2xl font-bold mb-2">
+        Booking Confirmed Successfully
+      </h2>
+
+      <p className="text-gray-600 mb-4">
+        A professional will be assigned shortly.
+      </p>
+
+      <p className="text-sm text-gray-500 mb-6">
+        You will receive confirmation message on your mobile number.
+      </p>
+
+      <Link to="/bookings">
+        <button className="w-full bg-blue-600 text-white py-3 rounded-lg mb-3">
+          Go to My Bookings
+        </button>
+      </Link>
+
+      <Link to="/services">
+        <button className="w-full border py-3 rounded-lg">
+          Browse Other Services
+        </button>
+      </Link>
+
+    </div>
+  </div>
+)}
     </div>
   );
 };

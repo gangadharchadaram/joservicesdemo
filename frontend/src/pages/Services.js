@@ -5,28 +5,41 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { serviceCategories, services } from '../mockData';
+import { useSearchParams } from "react-router-dom";
 import * as LucideIcons from 'lucide-react';
 
 const Services = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+const [searchParams] = useSearchParams();
+const categoryId = searchParams.get("category");
 
-  const filteredServices = useMemo(() => {
-    let filtered = services;
+const filteredServices = useMemo(() => {
+  let filtered = services;
 
-    if (selectedCategory) {
-      filtered = filtered.filter(service => service.categoryId === selectedCategory);
-    }
+  // category from URL
+  if (categoryId) {
+    filtered = filtered.filter(
+      (service) => service.categoryId === parseInt(categoryId)
+    );
+  }
 
-    if (searchQuery) {
-      filtered = filtered.filter(service =>
-        service.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  // category button filter
+  if (selectedCategory) {
+    filtered = filtered.filter(
+      (service) => service.categoryId === selectedCategory
+    );
+  }
 
-    return filtered;
-  }, [searchQuery, selectedCategory]);
+  // search filter
+  if (searchQuery) {
+    filtered = filtered.filter((service) =>
+      service.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
 
+  return filtered;
+}, [searchQuery, selectedCategory, categoryId]);
   const getCategoryName = (categoryId) => {
     return serviceCategories.find(cat => cat.id === categoryId)?.name || '';
   };
