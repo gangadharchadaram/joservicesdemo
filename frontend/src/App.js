@@ -13,6 +13,7 @@ import About from "@/pages/About";
 import { AuthProvider } from "@/context/AuthContext";
 import { BookingProvider } from "@/context/BookingContext";
 import MyBookings from "@/pages/MyBookings";
+import BecomeProvider from "./pages/BecomeProvider";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/about" element={<About />} />
             <Route path="/bookings" element={<MyBookings />} />
+            <Route path="/become-provider" element={<BecomeProvider />} />
           </Routes>
           </main>
           <Footer />

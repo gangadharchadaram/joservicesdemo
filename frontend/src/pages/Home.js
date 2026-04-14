@@ -9,6 +9,13 @@ import { useRef } from "react";
 import { MapPin, Wrench, Paintbrush, Zap, Hammer, CheckCircle } from "lucide-react";
 import { services } from "../mockData";
 import { useNavigate } from "react-router-dom";
+import * as Icons from "lucide-react";
+
+import {
+  Sparkles,
+  Droplets,
+  Settings
+} from "lucide-react";
 
 
 const Home = () => {
@@ -18,6 +25,19 @@ const [results, setResults] = useState([]);
 const scrollRef = useRef();
 const sliderRefs = useRef({});
 const navigate = useNavigate();
+const [showProviderSignup, setShowProviderSignup] = useState(false);
+const [providerStep, setProviderStep] = useState(1);
+
+const iconMap = {
+Wrench,
+Zap,
+Paintbrush,
+Sparkles,
+Hammer,
+Home,
+Droplets,
+Settings
+};
 
 const handleSearch = (value) => {
   setSearch(value);
@@ -185,79 +205,167 @@ const handleSearch = (value) => {
 </section>
 
 {/* Popular Categories */}
+
 <section className="py-20 bg-white">
-  <div className="w-full px-6 lg:px-16">
+  <div className="max-w-7xl mx-auto px-6 lg:px-16">
 
     {/* Header */}
-    <div className="flex items-center justify-between mb-8">
-      <div>
-        <p className="text-blue-600 font-semibold">CATEGORIES</p>
-        <h2 className="text-3xl font-bold">Popular Categories</h2>
-      </div>
+    <div className="flex items-center justify-between mb-12">
+      <h2 className="text-3xl font-bold text-gray-900">
+        Browse pros in your area
+      </h2>
 
       <button
         onClick={() => navigate("/services")}
-        className="border border-blue-600 text-blue-600 px-5 py-2 rounded-lg hover:bg-blue-50"
+        className="text-gray-600 hover:text-blue-600 flex items-center gap-2"
       >
-        Check All →
+        View all →
       </button>
     </div>
 
-    {/* Slider */}
-    <div className="relative">
+    {/* categories grid */}
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-10">
 
-      {/* left arrow */}
-      <button
-        onClick={() => scrollRef.current.scrollBy({ left: -300, behavior: "smooth" })}
-        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow-lg p-2 rounded-full z-10"
-      >
-        <ChevronLeft />
-      </button>
+      {serviceCategories.map(category => {
 
-      {/* categories */}
-      <div
-        ref={scrollRef}
-        className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth px-10"
-      >
-        {serviceCategories.map(category => {
+        const Icon = Icons[category.icon] || Icons.Wrench;
 
-          const count = services.filter(
-            s => s.categoryId === category.id
-          ).length;
+        return (
+          <div
+            key={category.id}
+            onClick={() => navigate(`/services?category=${category.id}`)}
+            className="flex items-center gap-4 cursor-pointer group"
+          >
 
-          return (
-            <div
-              key={category.id}
-              onClick={() => navigate(`/services?category=${category.id}`)}
-              className="min-w-[220px] bg-white border rounded-2xl p-6 text-center cursor-pointer hover:shadow-xl transition"
-            >
-              <img
-                src={category.image}
-                className="h-20 mx-auto mb-4"
-              />
-
-              <h3 className="font-semibold text-lg">
-                {category.name}
-              </h3>
-
-              <p className="text-gray-500 text-sm">
-                {count} Services
-              </p>
+            {/* circle icon */}
+            <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-blue-50 transition">
+              <Icon className="w-6 h-6 text-gray-600 group-hover:text-blue-600"/>
             </div>
-          );
-        })}
+
+            {/* label */}
+            <span className="text-gray-800 font-medium group-hover:text-blue-600">
+              {category.name}
+            </span>
+
+          </div>
+        );
+      })}
+
+    </div>
+
+  </div>
+</section>
+
+{/* Popular Projects */}
+<section className="py-20 bg-gray-50">
+  <div className="w-full px-6 lg:px-16">
+
+    {/* header */}
+    <div className="flex items-center justify-between mb-10">
+      <h2 className="text-3xl font-bold text-gray-900">
+        Popular projects near you
+      </h2>
+
+      <button className="text-blue-600 font-medium">
+        View all →
+      </button>
+    </div>
+
+    <div className="grid lg:grid-cols-3 gap-8">
+
+      {/* LEFT CARD */}
+      <div className="bg-white rounded-3xl p-6 shadow-sm border relative overflow-hidden">
+
+        <h3 className="text-xl font-semibold mb-2">
+          Get matched
+          <br/> with local pros
+        </h3>
+
+        <p className="text-gray-500 text-sm mb-6">
+          for your next home project.
+        </p>
+
+        <img
+          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+          className="w-full mt-6"
+        />
+
+        <div className="absolute bottom-0 right-0 w-60 h-60 bg-blue-50 rounded-full -mr-20 -mb-20"/>
       </div>
 
-      {/* right arrow */}
-      <button
-        onClick={() => scrollRef.current.scrollBy({ left: 300, behavior: "smooth" })}
-        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow-lg p-2 rounded-full"
-      >
-        <ChevronRight />
-      </button>
 
+      {/* RIGHT LIST */}
+      <div className="lg:col-span-2 grid md:grid-cols-2 gap-6">
+
+        {[
+          {
+            name:"AC Repair",
+            rating:"4.7",
+            price:"₹499",
+            image:"https://images.unsplash.com/photo-1581578731548-c64695cc6952"
+          },
+          {
+            name:"Home Cleaning",
+            rating:"4.8",
+            price:"₹899",
+            image:"https://images.unsplash.com/photo-1527515637462-cff94eecc1ac"
+          },
+          {
+            name:"Painting Service",
+            rating:"4.6",
+            price:"₹1499",
+            image:"https://images.unsplash.com/photo-1562259949-e8e7689d7828"
+          },
+          {
+            name:"Plumbing Service",
+            rating:"4.5",
+            price:"₹299",
+            image:"https://images.unsplash.com/photo-1585704032915-c3400ca199e7"
+          },
+          {
+            name:"Electrician",
+            rating:"4.8",
+            price:"₹249",
+            image:"https://images.unsplash.com/photo-1581092160562-40aa08e78837"
+          },
+          {
+            name:"Carpentry",
+            rating:"4.6",
+            price:"₹699",
+            image:"https://images.unsplash.com/photo-1503387762-592deb58ef4e"
+          }
+        ].map((item, i) => (
+
+          <div
+            key={i}
+            className="flex items-center gap-4 bg-white p-3 rounded-xl shadow-sm border hover:shadow-md cursor-pointer transition"
+          >
+
+            <img
+              src={item.image}
+              className="w-20 h-16 object-cover rounded-lg"
+            />
+
+            <div>
+              <div className="font-semibold text-gray-900">
+                {item.name}
+              </div>
+
+              <div className="text-sm text-gray-500">
+                ⭐ {item.rating}
+              </div>
+
+              <div className="text-sm font-medium text-gray-900">
+                From {item.price}
+              </div>
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
     </div>
-
   </div>
 </section>
 
@@ -340,167 +448,471 @@ const handleSearch = (value) => {
   </div>
 </section>
 
-{/* Included Services */}
+{/* Popular Home Projects */}
 <section className="py-20 bg-white">
   <div className="w-full px-6 lg:px-16">
 
-    <div className="mb-10">
-      <p className="text-blue-600 font-semibold tracking-wider">
-        FEATURED
-      </p>
-      <h2 className="text-4xl font-bold text-gray-900">
-        Included Services
+    {/* header */}
+    <div className="flex items-center justify-between mb-8">
+      <h2 className="text-3xl font-bold text-gray-900">
+        Popular home projects
       </h2>
+
+      <button className="text-blue-600 font-medium">
+        View all →
+      </button>
     </div>
 
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="grid md:grid-cols-3 gap-6">
 
-      {services.slice(0,6).map(service => {
+      {[
+        {
+          title:"One-time cleaning service",
+          rating:"4.9",
+          reviews:"256",
+          price:"₹699",
+          image:"https://images.unsplash.com/photo-1581578731548-c64695cc6952"
+        },
+        {
+          title:"Handyperson for small projects",
+          rating:"4.7",
+          reviews:"63",
+          price:"₹499",
+          image:"https://images.unsplash.com/photo-1621905251918-48416bd8575a"
+        },
+        {
+          title:"Fence installation & repair",
+          rating:"4.8",
+          reviews:"29",
+          price:"₹899",
+          image:"https://images.unsplash.com/photo-1503387762-592deb58ef4e"
+        }
+      ].map((item,i)=>(
+        
+        <div
+          key={i}
+          className="bg-white rounded-2xl border shadow-sm overflow-hidden hover:shadow-lg transition"
+        >
 
-        const category = serviceCategories.find(
-          c => c.id === service.categoryId
-        );
+          {/* image */}
+          <div className="relative">
 
-        return (
-          <div
-            key={service.id}
-            className="bg-white rounded-2xl shadow-sm border hover:shadow-xl transition overflow-hidden"
-          >
+            <img
+              src={item.image}
+              className="w-full h-56 object-cover"
+            />
 
-            {/* image */}
-            <div className="relative">
-              <img
-                src={service.image}
-                className="w-full h-56 object-cover"
-              />
+            {/* overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
 
-              <span className="absolute top-4 left-4 bg-white px-3 py-1 rounded-md text-sm font-medium shadow">
-                {category?.name}
-              </span>
+            {/* title */}
+            <div className="absolute bottom-4 left-4 right-4 text-white font-semibold text-lg">
+              {item.title}
             </div>
 
-            {/* content */}
-            <div className="p-5">
-
-              {/* location + rating */}
-              <div className="flex justify-between text-sm text-gray-500 mb-2">
-                <span>📍 Hyderabad</span>
-                <span>⭐ {service.rating}</span>
-              </div>
-
-              {/* title */}
-              <h3 className="font-semibold text-lg mb-3">
-                {service.name}
-              </h3>
-
-              {/* price */}
-              <div className="flex items-center justify-between">
-
-                <div>
-                  <div className="text-sm text-gray-500">
-                    Starting from
-                  </div>
-                  <div className="text-xl font-bold text-blue-600">
-                    ₹{service.price}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => navigate(`/service/${service.id}`)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                >
-                  Book Now
-                </button>
-
-              </div>
-
-            </div>
           </div>
-        );
-      })}
+
+          {/* bottom */}
+          <div className="flex items-center justify-between p-4">
+
+            <div className="text-sm text-gray-600">
+              ⭐ {item.rating} ({item.reviews})
+              <div className="text-gray-900 font-medium">
+                From {item.price}
+              </div>
+            </div>
+
+            <button className="border px-4 py-2 rounded-lg hover:bg-blue-50">
+              Book now
+            </button>
+
+          </div>
+
+        </div>
+
+      ))}
 
     </div>
   </div>
 </section>
-{/* Services By Category */}
-{/* Zig Zag Services */}
-<div className="py-20 space-y-20">
 
-{serviceCategories.map((category, index) => {
+{/* Become a Professional CTA */}
+{/* Become a Professional CTA */}
+<section className="py-20 bg-white">
+  <div className="w-full px-6 lg:px-16">
 
-  const categoryServices = services.filter(
-    s => s.categoryId === category.id
-  );
+    <div className="grid md:grid-cols-2 rounded-3xl overflow-hidden shadow-lg">
 
-  if (!categoryServices.length) return null;
+      {/* LEFT BLUE */}
+      <div className="bg-blue-600 text-white p-12 flex flex-col justify-center">
 
-  const isBlue = index % 2 !== 0;
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          Grow your business with us.
+          <br />
+          Become a Pro today
+        </h2>
 
-  return (
-    <div key={category.id} className="w-full px-6 lg:px-16">
+        <p className="text-blue-100 mb-6">
+          Join JO Services and connect with customers near you.
+          Increase your bookings and grow your service business.
+        </p>
 
-      <div
-        className={`rounded-3xl p-10 ${
-          isBlue
-            ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white"
-            : "bg-white"
-        }`}
-      >
-        <div className={`grid md:grid-cols-2 gap-12 items-center`}>
+        <div className="flex gap-4">
+        <button
+onClick={() => navigate("/become-provider")}
+className="bg-white text-blue-600 px-6 py-3 rounded-lg"
+>
++ Add business
+</button>
 
-          {/* image */}
-          <div className={isBlue ? "md:order-2" : ""}>
-            <img
-              src={category.image}
-              className="rounded-2xl shadow-lg w-full h-[300px] object-cover"
-            />
-          </div>
-
-          {/* content */}
-          <div className={isBlue ? "md:order-1" : ""}>
-            <h2 className="text-3xl font-bold mb-6">
-              {category.name}
-            </h2>
-
-            <div className="space-y-3 mb-6">
-              {categoryServices.slice(0,4).map(service => (
-                <div
-                  key={service.id}
-                  className={`flex justify-between p-3 rounded-lg ${
-                    isBlue
-                      ? "bg-white/10"
-                      : "bg-blue-50"
-                  }`}
-                >
-                  <span>{service.name}</span>
-                  <span className="font-semibold">
-                    ₹{service.price}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={() => navigate(`/services?category=${category.id}`)}
-              className={`px-5 py-3 rounded-lg ${
-                isBlue
-                  ? "bg-white text-blue-600"
-                  : "bg-blue-600 text-white"
-              }`}
-            >
-              Explore Services
-            </button>
-          </div>
-
+          <button className="border border-white px-6 py-3 rounded-lg hover:bg-white hover:text-blue-600 transition">
+            Learn more →
+          </button>
         </div>
+
       </div>
 
-    </div>
-  );
+{/* RIGHT IMAGE */}
+<div className="relative flex items-center justify-center">
 
-})}
+  <img
+    src="https://images.unsplash.com/photo-1503387762-592deb58ef4e"
+    className="w-full h-full object-cover"
+  />
+
+  {/* CENTER ROTATING CIRCLE */}
+  <div className="absolute inset-0 flex items-center justify-center">
+
+    <div className="relative w-40 h-40 flex items-center justify-center">
+
+      {/* rotating text */}
+      <div className="absolute inset-0 animate-spin-slow">
+
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <defs>
+            <path
+              id="circlePath"
+              d="M 100,100
+                 m -75,0
+                 a 75,75 0 1,1 150,0
+                 a 75,75 0 1,1 -150,0"
+            />
+          </defs>
+
+          <text
+            fill="white"
+            fontSize="12"
+            letterSpacing="2"
+            fontWeight="600"
+          >
+            <textPath href="#circlePath">
+              JOIN OUR PROFESSIONAL NETWORK • BECOME A PARTNER •
+            </textPath>
+          </text>
+
+        </svg>
+
+      </div>
+
+      {/* circle border */}
+      <div className="absolute inset-0 border border-white/40 rounded-full"></div>
+
+      {/* center dot */}
+      <div className="w-4 h-4 bg-white rounded-full z-10"></div>
+
+    </div>
+
+  </div>
 
 </div>
+
+    </div>
+   {showProviderSignup && (
+<div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center">
+
+<div className="bg-white w-[900px] rounded-2xl shadow-2xl p-8 relative">
+
+{/* close */}
+<button
+onClick={()=>setShowProviderSignup(false)}
+className="absolute top-4 right-4 text-gray-500"
+>
+✕
+</button>
+
+{/* header */}
+<h2 className="text-2xl font-bold mb-6">
+What is your business address?
+</h2>
+
+<div className="grid grid-cols-2 gap-4">
+
+<input placeholder="Country" className="border p-3 rounded-lg"/>
+<input placeholder="City" className="border p-3 rounded-lg"/>
+
+<input placeholder="District" className="border p-3 rounded-lg"/>
+<input placeholder="Zip Code" className="border p-3 rounded-lg"/>
+
+</div>
+
+<input 
+placeholder="Address line" 
+className="border p-3 rounded-lg w-full mt-4"
+/>
+
+<h3 className="text-xl font-semibold mt-6">
+Where do you want to work?
+</h3>
+
+<input
+placeholder="Search area where you provide your services"
+className="border p-3 rounded-lg w-full mt-3"
+/>
+
+<div className="flex gap-2 mt-4">
+<span className="px-3 py-1 bg-gray-100 rounded-full text-sm">Ameerpet</span>
+<span className="px-3 py-1 bg-gray-100 rounded-full text-sm">Madhapur</span>
+<span className="px-3 py-1 bg-gray-100 rounded-full text-sm">Kondapur</span>
+</div>
+
+<button
+onClick={() => setProviderStep(2)}
+className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg"
+>
+Continue
+</button>
+{providerStep === 2 && (
+<>
+<h2 className="text-2xl font-bold mb-6">
+Choose services you provide
+</h2>
+
+<div className="grid grid-cols-3 gap-4">
+
+{[
+"AC Repair",
+"Plumbing",
+"Electrician",
+"Cleaning",
+"Painting",
+"Carpentry",
+"Appliance Repair",
+"Home Cleaning",
+"Bathroom Cleaning"
+].map(service => (
+
+<label className="border rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:border-blue-500">
+
+<input type="checkbox" />
+
+<span>{service}</span>
+
+</label>
+
+))}
+
+</div>
+
+<div className="flex justify-between mt-6">
+
+<button
+onClick={()=>setProviderStep(1)}
+className="border px-6 py-3 rounded-lg"
+>
+Back
+</button>
+
+<button
+onClick={()=>setProviderStep(3)}
+className="bg-blue-600 text-white px-6 py-3 rounded-lg"
+>
+Continue
+</button>
+
+</div>
+</>
+)}
+{providerStep === 3 && (
+<>
+<h2 className="text-2xl font-bold mb-6">
+Profile details
+</h2>
+
+<div className="grid grid-cols-2 gap-4">
+
+<input
+placeholder="Full Name"
+className="border p-3 rounded-lg"
+/>
+
+<input
+placeholder="Phone Number"
+className="border p-3 rounded-lg"
+/>
+
+<input
+placeholder="Years of Experience"
+className="border p-3 rounded-lg"
+/>
+
+<input
+placeholder="City"
+className="border p-3 rounded-lg"
+/>
+
+</div>
+
+<textarea
+placeholder="About your services"
+className="border p-3 rounded-lg w-full mt-4 h-24"
+/>
+
+{/* upload */}
+<div className="mt-4">
+<label className="block text-sm font-medium mb-2">
+Upload profile photo
+</label>
+
+<input type="file" />
+</div>
+
+<div className="flex justify-between mt-6">
+
+<button
+onClick={()=>setProviderStep(2)}
+className="border px-6 py-3 rounded-lg"
+>
+Back
+</button>
+
+<button
+onClick={()=>setProviderStep(4)}
+className="bg-blue-600 text-white px-6 py-3 rounded-lg"
+>
+Continue
+</button>
+
+</div>
+</>
+)}
+{providerStep === 4 && (
+<>
+<h2 className="text-2xl font-bold mb-6">
+Price & working hours
+</h2>
+
+{/* service price */}
+<div className="mb-4">
+<label className="block text-sm font-medium mb-2">
+Starting price
+</label>
+
+<input
+placeholder="₹ 299"
+className="border p-3 rounded-lg w-full"
+/>
+</div>
+
+{/* working days */}
+<div className="mb-4">
+<label className="block text-sm font-medium mb-2">
+Working days
+</label>
+
+<div className="flex flex-wrap gap-2">
+{["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(day => (
+<label className="border px-3 py-2 rounded-lg flex gap-2 items-center">
+<input type="checkbox"/>
+{day}
+</label>
+))}
+</div>
+</div>
+
+{/* time */}
+<div className="grid grid-cols-2 gap-4">
+<div>
+<label className="text-sm">Start time</label>
+<input type="time" className="border p-3 rounded-lg w-full"/>
+</div>
+
+<div>
+<label className="text-sm">End time</label>
+<input type="time" className="border p-3 rounded-lg w-full"/>
+</div>
+</div>
+
+{/* instant booking */}
+<div className="flex items-center gap-3 mt-4">
+<input type="checkbox"/>
+<span>Accept instant bookings</span>
+</div>
+
+<div className="flex justify-between mt-6">
+
+<button
+onClick={()=>setProviderStep(3)}
+className="border px-6 py-3 rounded-lg"
+>
+Back
+</button>
+
+<button
+onClick={()=>setProviderStep(5)}
+className="bg-blue-600 text-white px-6 py-3 rounded-lg"
+>
+Create Profile
+</button>
+
+</div>
+</>
+)}
+
+{providerStep === 5 && (
+<div className="text-center py-10">
+
+<div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+✓
+</div>
+
+<h2 className="text-2xl font-bold mb-2">
+Profile Created Successfully
+</h2>
+
+<p className="text-gray-600 mb-6">
+Your provider profile is ready.  
+Customers can now book your services.
+</p>
+
+<div className="flex justify-center gap-4">
+
+<button
+onClick={()=>{
+setShowProviderSignup(false)
+navigate("/provider-dashboard")
+}}
+className="bg-blue-600 text-white px-6 py-3 rounded-lg"
+>
+Go to Dashboard
+</button>
+
+<button
+onClick={()=>setProviderStep(1)}
+className="border px-6 py-3 rounded-lg"
+>
+Create Another
+</button>
+
+</div>
+
+</div>
+)}
+
+</div>
+</div>
+)}
+  </div>
+</section>
 
       {/* Why Choose Us */}
       <section className="py-20 bg-white">
