@@ -8,35 +8,149 @@ import { serviceCategories } from '../mockData';
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useBooking } from "../context/BookingContext";
+import { useNotification } from "../context/NotificationContext";
+
 
 
 const Cart = () => {
+    const { addNotification } = useBooking();
+
   const { cartItems, removeFromCart, clearCart, getTotalPrice } = useCart();
+
 
   const getCategoryName = (categoryId) => {
     return serviceCategories.find(cat => cat.id === categoryId)?.name || '';
   };
+
+const openRazorpay = () => {
+
+  const options = {
+    key: "rzp_test_1234567890", // replace with your test key
+    amount: (getTotalPrice() - discount) * 100, // paise
+    currency: "INR",
+    name: "JO Services",
+    description: "Service Booking Payment",
+
+    handler: function (response) {
+      // SUCCESS
+      handlePaymentSuccess(response);
+    },
+
+    prefill: {
+      name: user?.name || "Guest",
+      contact: user?.phone || "9999999999"
+    },
+
+    theme: {
+      color: "#2563eb"
+    },
+
+    modal: {
+      ondismiss: function () {
+        alert("Payment cancelled");
+      }
+    }
+  };
+
+  const rzp = new window.Razorpay(options);
+
+  rzp.on("payment.failed", function (response) {
+    handlePaymentFailure(response);
+  });
+
+  rzp.open();
+};
+
+
+const handlePaymentSuccess = (response) => {
+
+  const booking = {
+    id: Date.now(),
+    orderId: response.razorpay_payment_id,
+    items: cartItems,
+    total: getTotalPrice() - discount,
+    address,
+    paymentMethod: "ONLINE",
+    user,
+    status: "Paid",
+    date: new Date().toLocaleString()
+  };
+
+  addBooking(booking);
+   addNotification("Booking Confirmed ✅");
+  addNotification("Payment Successful 💳");
+  addNotification("Professional Assigned 👨‍🔧");
+
+  setShowSuccess(true);
+  clearCart();
+};
+
+const handlePaymentFailure = (response) => {
+  alert("Payment Failed ❌");
+  console.log(response);
+};
+
 const handleCheckout = () => {
+
   if (!address) {
     alert("Please enter service address");
     return;
   }
 
-  const booking = {
-    id: Date.now(),
-    items: cartItems,
-    total: getTotalPrice() - discount,
-    address,
-    user,
-    status: "Confirmed",
-    date: new Date().toLocaleString()
-  };
+  if (!paymentMethod) {
+    alert("Please select payment method");
+    return;
+  }
+
+  // if online payment → open Razorpay
+  if (paymentMethod === "ONLINE") {
+    openRazorpay();
+    return;
+  }
+
+  // COD FLOW
+const getRandomProfessional = () => {
+  const pros = [
+    { name: "Ravi Kumar", phone: "9999999999", rating: 4.8 },
+    { name: "Suresh Naidu", phone: "8888888888", rating: 4.7 },
+    { name: "Akash Reddy", phone: "7777777777", rating: 4.9 }
+  ];
+
+  return pros[Math.floor(Math.random() * pros.length)];
+};
+const booking = {
+  id: Date.now(),
+  items: cartItems,
+  total: getTotalPrice() - discount,
+  address,
+
+  paymentMethod,
+  paymentStatus: paymentMethod === "ONLINE" ? "Paid" : "Pending",
+
+  professional: getRandomProfessional(), // ✅ now contains phone
+   user: user,
+  status: "Confirmed",
+  date: new Date().toLocaleString()
+};
+
+const message = `Booking Confirmed!
+Service: ${cartItems[0]?.name}
+Date: ${new Date().toLocaleDateString()}
+Amount: ₹${getTotalPrice() - discount}`;
+
+window.open(
+  `https://wa.me/918142541365?text=${encodeURIComponent(message)}`
+);
 
   addBooking(booking);
 
+  addNotification("Booking Confirmed ✅");
+addNotification("Professional Assigned 👨‍🔧");
   setShowSuccess(true);
   clearCart();
 };
+
+const [paymentMethod, setPaymentMethod] = useState("");
 
   const [coupon, setCoupon] = useState("");
 const [discount, setDiscount] = useState(0);
@@ -229,6 +343,35 @@ const applyCoupon = () => {
             <div className="mt-1">{address}</div>
           </div>
         )}
+
+        {/* PAYMENT */}
+<div className="border rounded-xl p-4 bg-white shadow-sm">
+  <h3 className="font-semibold mb-3">Payment Method</h3>
+
+  <div className="space-y-2">
+
+    <label className="flex items-center gap-3 border p-3 rounded-lg cursor-pointer">
+      <input
+        type="radio"
+        value="ONLINE"
+        checked={paymentMethod === "ONLINE"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      <span>Pay Online (UPI / Card / Wallet)</span>
+    </label>
+
+    <label className="flex items-center gap-3 border p-3 rounded-lg cursor-pointer">
+      <input
+        type="radio"
+        value="COD"
+        checked={paymentMethod === "COD"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      <span>Cash on Service</span>
+    </label>
+
+  </div>
+</div>
 
         {/* total */}
         <div className="border-t border-blue-100 pt-3">

@@ -7,12 +7,18 @@ import { User } from 'lucide-react';
 import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import logo from "./images/WhatsApp_Image_2026-04-12_at_7.52.00_AM-removebg-preview.png";
+import { useNavigate } from "react-router-dom";
+import { useNotification } from "../context/NotificationContext";
+
+
 
 
 const Navbar = () => {
   const location = useLocation();
   const { cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { notifications } = useNotification();
 
   const [showAuth, setShowAuth] = useState(false);
 const [isSignup, setIsSignup] = useState(false);
@@ -64,14 +70,23 @@ useEffect(() => {
   ))}
 
   {/* STEP 6 — My Bookings */}
-  {user && (
-    <Link
-      to="/bookings"
-      className="text-sm font-medium text-gray-700 hover:text-blue-600"
+ {user?.role === "USER" && (
+  <Link to="/bookings">My Bookings</Link>
+)}
+
+{user?.role === "PROVIDER" && (
+  <Link to="/provider-dashboard">Provider Dashboard</Link>
+)}
+</div>
+<div className="fixed top-20 right-5 z-[9999] space-y-2">
+  {notifications.map(n => (
+    <div
+      key={n.id}
+      className="bg-black text-white px-4 py-2 rounded-lg shadow-lg animate-slide-in"
     >
-      My Bookings
-    </Link>
-  )}
+      {n.message}
+    </div>
+  ))}
 </div>
 
 
@@ -122,6 +137,7 @@ useEffect(() => {
   >
     Login
   </button>
+  
 )}
           </div>
         </div>
@@ -147,66 +163,86 @@ useEffect(() => {
         )}
       </div>
 {showAuth && (
-  <div className="fixed inset-0 z-[9999] backdrop-blur-md bg-black/30">
+  <div className="fixed inset-0 z-[9999] backdrop-blur-md bg-black/40 flex items-center justify-center">
 
-    <div className="min-h-screen w-full flex items-center justify-center p-4">
-      
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 relative animate-fadeIn">
 
-        <button
-          onClick={() => setShowAuth(false)}
-          className="absolute top-3 right-3"
-        >
-          <X />
-        </button>
+      {/* Close */}
+      <button
+        onClick={() => setShowAuth(false)}
+        className="absolute top-4 right-4 text-gray-500 hover:text-black"
+      >
+        <X />
+      </button>
 
-        <h2 className="text-2xl font-bold mb-4 text-center">
-          {isSignup ? "Create Account" : "Login"}
-        </h2>
+      {/* Title */}
+      <h2 className="text-3xl font-bold text-center mb-6">
+        Welcome Back 👋
+      </h2>
 
-        {/* phone */}
+      {/* Phone */}
+      <input
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+        placeholder="Enter phone number"
+        className="w-full border border-gray-200 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      {/* Name (Signup only) */}
+      {isSignup && (
         <input
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="Enter phone number"
-          className="w-full border rounded-lg px-4 py-3 mb-3"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Full Name"
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 mb-4"
         />
+      )}
 
-        {/* name */}
-        {isSignup && (
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Full Name"
-            className="w-full border rounded-lg px-4 py-3 mb-3"
-          />
-        )}
+      {/* USER LOGIN */}
+      <button
+        onClick={() => {
+          if (!phone) return alert("Enter phone number");
 
-        {/* login button */}
+          login(phone, name || "User", "USER");
+          setShowAuth(false);
+        }}
+        className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition"
+      >
+        Continue as User
+      </button>
+
+      {/* Divider */}
+      <div className="flex items-center gap-3 my-5">
+        <div className="flex-1 h-[1px] bg-gray-200"></div>
+        <span className="text-gray-400 text-sm">OR</span>
+        <div className="flex-1 h-[1px] bg-gray-200"></div>
+      </div>
+
+      {/* PROVIDER LOGIN */}
+      <button
+        onClick={() => {
+          if (!phone) return alert("Enter phone number");
+
+          login(phone, name || "Provider", "PROVIDER");
+          setShowAuth(false);
+        }}
+        className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold shadow hover:scale-[1.02] transition"
+      >
+        👨‍🔧 Login as Professional
+      </button>
+
+      {/* Switch */}
+      <div className="text-center mt-5 text-sm">
+        {isSignup ? "Already have account?" : "New user?"}
         <button
-          onClick={() => {
-            login(phone, name);
-            setShowAuth(false);
-          }}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg"
+          onClick={() => setIsSignup(!isSignup)}
+          className="text-blue-600 ml-2 font-medium"
         >
-          {isSignup ? "Create Account" : "Continue"}
+          {isSignup ? "Login" : "Create account"}
         </button>
-
-        <div className="text-center mt-4 text-sm">
-          {isSignup ? "Already have account?" : "New user?"}
-          <button
-            onClick={() => setIsSignup(!isSignup)}
-            className="text-blue-600 ml-2"
-          >
-            {isSignup ? "Login" : "Create account"}
-          </button>
-        </div>
-
       </div>
 
     </div>
-
   </div>
 )}
     </nav>

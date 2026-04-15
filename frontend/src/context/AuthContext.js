@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
@@ -6,22 +6,22 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]); // dummy users
 
-  const login = (phone, name) => {
-    // check if user already exists
-    const existing = users.find(u => u.phone === phone);
+  useEffect(() => {
+  const saved = localStorage.getItem("user");
+  if (saved) setUser(JSON.parse(saved));
+}, []);
 
-    if (existing) {
-      setUser(existing);
-    } else {
-      const newUser = {
-        name: name || "User",
-        phone
-      };
-
-      setUsers([...users, newUser]);
-      setUser(newUser);
-    }
+  const login = (phone, name, role = "USER") => {
+  const userData = {
+    name,
+    phone,
+    role // 👈 IMPORTANT
   };
+
+  setUser(userData);
+  localStorage.setItem("user", JSON.stringify(userData));
+};
+
 
   const logout = () => setUser(null);
 
