@@ -19,6 +19,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { notifications } = useNotification();
+const isHome = location.pathname === "/";
 
   const [showAuth, setShowAuth] = useState(false);
 const [isSignup, setIsSignup] = useState(false);
@@ -42,8 +43,8 @@ useEffect(() => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 border-b border-blue-100 shadow-sm">
-      <div className="w-full px-6 lg:px-16">
+      <nav className="absolute top-0 left-0 w-full z-50 bg-transparent">
+        <div className="w-full px-6 lg:px-16">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
          <Link to="/" className="flex items-center space-x-2">
@@ -60,10 +61,10 @@ useEffect(() => {
       key={link.path}
       to={link.path}
       className={`text-sm font-medium ${
-        isActive(link.path)
-          ? "text-blue-600"
-          : "text-gray-700 hover:text-blue-600"
-      }`}
+  isActive(link.path)
+    ? "text-yellow-400"
+    : "text-white hover:text-yellow-400"
+}`}
     >
       {link.label}
     </Link>
@@ -132,11 +133,11 @@ useEffect(() => {
   </div>
 ) : (
   <button
-    onClick={() => setShowAuth(true)}
-    className="border border-blue-200 px-4 py-2 rounded-lg hover:bg-blue-50"
-  >
-    Login
-  </button>
+  onClick={() => setShowAuth(true)}
+  className="bg-yellow-400 text-black px-5 py-2 rounded-lg font-medium"
+>
+  Login
+</button>
   
 )}
           </div>

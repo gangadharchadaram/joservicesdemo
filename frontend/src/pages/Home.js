@@ -10,6 +10,8 @@ import { MapPin, Wrench, Paintbrush, Zap, Hammer, CheckCircle } from "lucide-rea
 import { services } from "../mockData";
 import { useNavigate } from "react-router-dom";
 import * as Icons from "lucide-react";
+import { ClipboardList, User, Lightbulb } from "lucide-react";
+
 
 import {
   Sparkles,
@@ -57,157 +59,98 @@ const handleSearch = (value) => {
   return (
     <div className="min-h-screen">
      {/* Hero Section */}
-<section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-white py-20">
-  <div className="w-full px-6 lg:px-16">
-    <div className="grid md:grid-cols-2 gap-10 items-center">
+<section className="relative w-full h-[650px] overflow-hidden">
 
-      {/* LEFT CONTENT */}
-      <div>
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-          Choose Experts
+  {/* BACKGROUND */}
+  <div className="absolute inset-0 flex">
+
+    {/* LEFT SIDE */}
+    <div className="w-2/3 relative">
+
+      {/* images */}
+      <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
+        <img src="https://images.unsplash.com/photo-1525186402429-b4ff38bedbec" className="w-full h-full object-cover"/>
+        <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952" className="w-full h-full object-cover"/>
+        <img src="https://images.unsplash.com/photo-1560185127-6ed189bf02f4" className="w-full h-full object-cover"/>
+        <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e" className="w-full h-full object-cover"/>
+      </div>
+
+      {/* overlay */}
+      <div className="absolute inset-0 bg-blue-900/80"></div>
+
+      {/* text */}
+      <div className="relative z-10 flex flex-col justify-center h-full px-10 lg:px-20 text-white">
+
+        <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+          Hire <span className="text-yellow-400">Experts</span> &
           <br />
-          to Complete Your
-          <br />
-          <span className="text-blue-600">Job</span> Done
+          Get Your Job Done
         </h1>
 
-        <p className="mt-6 text-gray-600 text-lg max-w-xl">
-          Explore our marketplace to find top-rated professionals in your area.
-          Compare reviews, check availability, and book services with confidence.
+        <div className="w-20 h-[3px] bg-yellow-400 mt-4 mb-6"></div>
+
+        <p className="text-gray-200 text-lg max-w-lg">
+          Find trusted professionals near you and get your job done quickly.
         </p>
 
-        {/* Search Box with Location */}
-<div className="relative mt-8 max-w-xl">
-
-  <div className="flex bg-white rounded-xl shadow-lg overflow-hidden border border-blue-100">
-
-    {/* location */}
-    <div className="flex items-center gap-2 px-4 border-r bg-gray-50">
-      <MapPin className="w-4 h-4 text-blue-600" />
-      <select className="bg-transparent outline-none py-4">
-        <option>Ameerpet</option>
-        <option>Kondapur</option>
-      </select>
+      </div>
     </div>
 
-    {/* input */}
-    <input
-      value={search}
-      onChange={(e) => handleSearch(e.target.value)}
-      placeholder="Find your service here"
-      className="flex-1 px-4 py-4 outline-none"
-    />
+    {/* RIGHT SIDE */}
+    <div className="w-1/3 bg-white relative">
 
-    <button className="bg-blue-600 px-6 text-white">
-      <Search className="w-5 h-5"/>
-    </button>
+      {/* curve */}
+      <div className="absolute -left-24 top-0 w-[220px] h-full bg-white rounded-l-[120px]"></div>
 
+    </div>
   </div>
 
-  {/* dropdown */}
-  {results.length > 0 && (
-    <div className="absolute top-full left-0 right-0 bg-white shadow-xl rounded-xl mt-2 border border-gray-100 z-50 max-h-80 overflow-y-auto">
+  {/* FORM */}
+  <div className="absolute right-[6%] top-1/2 -translate-y-1/2 z-20">
 
-      {results.map(service => (
-        <div
-          key={service.id}
-          onClick={() => navigate(`/service/${service.id}`)}
-          className="flex items-center gap-3 p-3 hover:bg-blue-50 cursor-pointer border-b last:border-none"
-        >
-          <img
-            src={service.image}
-            className="w-12 h-12 rounded-lg object-cover"
-          />
+    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[320px]">
 
-          <div className="flex-1">
-            <div className="font-medium text-gray-900">
-              {service.name}
-            </div>
-
-            <div className="text-sm text-gray-500">
-              ⭐ {service.rating} • ₹{service.price}
-            </div>
-          </div>
-
-        </div>
-      ))}
-
-    </div>
-  )}
-
-</div>
-
-        {/* Customers */}
-        <div className="flex items-center gap-4 mt-8">
-          <div className="flex -space-x-3">
-            <img className="w-10 h-10 rounded-full border-2 border-white" src="https://randomuser.me/api/portraits/men/32.jpg"/>
-            <img className="w-10 h-10 rounded-full border-2 border-white" src="https://randomuser.me/api/portraits/women/44.jpg"/>
-            <img className="w-10 h-10 rounded-full border-2 border-white" src="https://randomuser.me/api/portraits/men/22.jpg"/>
-          </div>
-
-          <div>
-            <div className="font-semibold text-blue-600">2k+ Customers</div>
-            <div className="text-sm text-gray-600">
-              Satisfied with JO services
-            </div>
-          </div>
-        </div>
+      <div className="mb-4">
+        <label className="text-sm text-gray-600">Keyword</label>
+        <input className="w-full mt-1 border rounded-lg px-4 py-3" />
       </div>
 
-      {/* RIGHT IMAGE */}
-      <div className="relative flex justify-center">
-
-
-  {/* background shape */}
-  <div className="absolute w-[420px] h-[420px] bg-blue-600 rounded-[40px] rotate-6 opacity-90"></div>
-
-  {/* floating icons */}
-  <div className="absolute -top-6 left-10 animate-bounce">
-    <div className="bg-white p-3 rounded-xl shadow-lg">
-      <Wrench className="text-blue-600 w-5 h-5" />
-    </div>
-  </div>
-
-  <div className="absolute top-10 -right-6 animate-pulse">
-    <div className="bg-white p-3 rounded-xl shadow-lg">
-      <Paintbrush className="text-blue-600 w-5 h-5" />
-    </div>
-  </div>
-
-  <div className="absolute bottom-20 -left-6 animate-bounce delay-200">
-    <div className="bg-white p-3 rounded-xl shadow-lg">
-      <Zap className="text-blue-600 w-5 h-5" />
-    </div>
-  </div>
-
-  <div className="absolute bottom-0 right-16 animate-pulse delay-300">
-    <div className="bg-white p-3 rounded-xl shadow-lg">
-      <Hammer className="text-blue-600 w-5 h-5" />
-    </div>
-  </div>
-
-  {/* main image */}
-  <img
-    src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=900&auto=format&fit=crop"
-    className="relative w-[420px] h-[420px] object-cover rounded-[40px] shadow-2xl"
-  />
-
-        {/* Floating Card */}
-        <div className="absolute bottom-5 left-0 bg-white shadow-lg rounded-xl px-4 py-3 border border-blue-100">
-          <div className="text-sm font-semibold">Cleaning Reviews</div>
-          <div className="text-xs text-gray-500">⭐ 5.0 Great</div>
-        </div>
-
+      <div className="mb-4">
+        <label className="text-sm text-gray-600">Category</label>
+        <select className="w-full mt-1 border rounded-lg px-4 py-3">
+          <option>Select Category</option>
+        </select>
       </div>
 
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <input placeholder="Country" className="border rounded-lg px-3 py-2"/>
+        <input placeholder="City" className="border rounded-lg px-3 py-2"/>
+      </div>
+
+      <button className="w-full bg-yellow-400 py-3 rounded-lg font-semibold hover:bg-yellow-500">
+        🔍 Find Provider
+      </button>
+
     </div>
+
   </div>
+
+  {/* BOTTOM CURVE */}
+  <div className="absolute bottom-0 w-full">
+    <svg viewBox="0 0 1440 150" className="w-full">
+      <path
+        fill="#ffffff"
+        d="M0,80 C400,150 1000,0 1440,80 L1440,150 L0,150 Z"
+      />
+    </svg>
+  </div>
+
 </section>
 
 {/* Popular Categories */}
 
 <section className="py-20 bg-white">
-  <div className="max-w-7xl mx-auto px-6 lg:px-16">
+  <div className="w-full px-6 lg:px-16">
 
     {/* Header */}
     <div className="flex items-center justify-between mb-12">
@@ -257,7 +200,7 @@ const handleSearch = (value) => {
 </section>
 
 {/* Popular Projects */}
-<section className="py-20 bg-gray-50">
+<section className="pt-15 bg-gray-50">
   <div className="w-full px-6 lg:px-16">
 
     {/* header */}
@@ -369,83 +312,75 @@ const handleSearch = (value) => {
   </div>
 </section>
 
- {/* How It Works */}
-<section className="py-20 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-[30px] mx-6 lg:mx-16 my-20">
-  <div className="text-center mb-14">
-    <div className="text-blue-100 font-semibold tracking-wider mb-3">
-      HOW IT WORKS
-    </div>
+{/*how it works*/}
 
-    <h2 className="text-4xl font-bold mb-4">
-      Convenient Service Access
-    </h2>
+     <section className="relative pt-2 pb-10 bg-white overflow-hidden">
 
-    <p className="text-blue-100 max-w-2xl mx-auto">
-      Book your service in few simple steps. Choose service, select schedule
-      and our professional will reach your doorstep.
-    </p>
-  </div>
+  {/* ✅ TITLE - FULL WIDTH LEFT (LIKE TEMPLATE) */}
+{/* TITLE - PERFECT ALIGNMENT */}
+<div className="pl-6 lg:pl-24 absolute top-[65%] -translate-y-1/2 z-10">
+  
+  <p className="text-blue-400 tracking-widest font-semibold mb-3">
+    STEPS
+  </p>
 
-  <div className="grid md:grid-cols-3 gap-10 px-6 lg:px-20">
+  <h2 className="text-4xl lg:text-5xl font-bold text-blue-900 leading-tight">
+    How JO Services <br /> Works
+  </h2>
 
-    {/* Step 1 */}
-    <div className="text-center relative">
-      <div className="w-24 h-24 mx-auto rounded-full border-2 border-blue-400 shadow-xl flex items-center justify-center mb-6">
-        <Search className="w-10 h-10 text-blue-600" />
+</div>
+
+  {/* ✅ MAIN CONTENT (CURVE + STEPS) */}
+  <div className="max-w-7xl mx-auto px-6 lg:px-16 relative">
+
+    {/* CURVE */}
+<svg className="absolute top-[8%] left-0 w-full hidden md:block" viewBox="0 0 1200 300" fill="none" > <path d="M0,120 C250,60 200,300 600,180 C800,120 750,270 1200, 200" stroke="#2563eb" strokeWidth="4" fill="transparent" /> </svg>
+    {/* STEPS */}
+    <div className="relative h-[400px] hidden md:block">
+
+      {/* STEP 1 */}
+<div className="absolute left-[28%] top-[53%] text-center">
+        <div className="w-24 h-24 bg-blue-600 rounded-[30%] rotate-45 flex items-center justify-center shadow-xl">
+          <ClipboardList className="text-white w-10 h-10 -rotate-45" />
+        </div>
+        <h3 className="mt-6 font-semibold text-blue-900">
+          Choose Your Service
+        </h3>
+        <p className="text-gray-500 text-sm max-w-[200px] mx-auto">
+          Pick the service you are looking for from the website or app.
+        </p>
       </div>
 
-      <div className="text-5xl text-white/20 absolute -top-6 left-1/2 -translate-x-1/2 font-bold">
-        01
+      {/* STEP 2 */}
+<div className="absolute left-[55%] top-[42%] text-center">
+        <div className="w-24 h-24 bg-blue-600 rounded-[30%] rotate-45 flex items-center justify-center shadow-xl">
+          <User className="text-white w-10 h-10 -rotate-45" />
+        </div>
+        <h3 className="mt-6 font-semibold text-blue-900">
+          Pick Your Schedule
+        </h3>
+        <p className="text-gray-500 text-sm max-w-[200px] mx-auto">
+          Select your convenient date and time for service.
+        </p>
       </div>
 
-      <h3 className="text-xl font-semibold mb-2">
-        Choose Your Service
-      </h3>
-
-      <p className="text-blue-100 text-sm">
-        Pick the service you are looking for from the website or app.
-      </p>
-    </div>
-
-    {/* Step 2 */}
-    <div className="text-center relative">
-      <div className="w-24 h-24 mx-auto rounded-full border-2 border-blue-400 shadow-xl flex items-center justify-center mb-6">
-        <Calendar className="w-10 h-10 text-blue-600" />
+      {/* STEP 3 */}
+<div className="absolute right-[0%] top-[54%] text-center">
+          <div className="w-24 h-24 bg-blue-600 rounded-[30%] rotate-45 flex items-center justify-center shadow-xl">
+          <Lightbulb className="text-white w-10 h-10 -rotate-45" />
+        </div>
+        <h3 className="mt-6 font-semibold text-blue-900">
+           Place The Order
+        </h3>
+        <p className="text-gray-500 text-sm max-w-[200px] mx-auto">
+          Confirm booking and our professional will reach you.
+        </p>
       </div>
 
-      <div className="text-5xl text-white/20 absolute -top-6 left-1/2 -translate-x-1/2 font-bold">
-        02
-      </div>
-
-      <h3 className="text-xl font-semibold mb-2">
-        Pick Your Schedule
-      </h3>
-
-      <p className="text-blue-100 text-sm">
-        Select your convenient date and time for service.
-      </p>
-    </div>
-
-    {/* Step 3 */}
-    <div className="text-center relative">
-      <div className="w-24 h-24 mx-auto rounded-full border-2 border-blue-400 shadow-xl flex items-center justify-center mb-6">
-        <CheckCircle className="w-10 h-10 text-blue-600" />
-      </div>
-
-      <div className="text-5xl text-white/20 absolute -top-6 left-1/2 -translate-x-1/2 font-bold">
-        03
-      </div>
-
-      <h3 className="text-xl font-semibold mb-2">
-        Place The Order
-      </h3>
-
-      <p className="text-blue-100 text-sm">
-        Confirm booking and our professional will reach you.
-      </p>
     </div>
 
   </div>
+
 </section>
 
 {/* Popular Home Projects */}
@@ -537,7 +472,6 @@ const handleSearch = (value) => {
 </section>
 
 {/* Become a Professional CTA */}
-{/* Become a Professional CTA */}
 <section className="py-20 bg-white">
   <div className="w-full px-6 lg:px-16">
 
@@ -569,8 +503,10 @@ className="bg-white text-blue-600 px-6 py-3 rounded-lg"
             Learn more →
           </button>
         </div>
-
+         
       </div>
+
+      
 
 {/* RIGHT IMAGE */}
 <div className="relative flex items-center justify-center">
@@ -579,8 +515,8 @@ className="bg-white text-blue-600 px-6 py-3 rounded-lg"
     src="https://images.unsplash.com/photo-1503387762-592deb58ef4e"
     className="w-full h-full object-cover"
   />
-
-  {/* CENTER ROTATING CIRCLE */}
+  
+   {/* CENTER ROTATING CIRCLE */}
   <div className="absolute inset-0 flex items-center justify-center">
 
     <div className="relative w-40 h-40 flex items-center justify-center">
@@ -623,6 +559,7 @@ className="bg-white text-blue-600 px-6 py-3 rounded-lg"
     </div>
 
   </div>
+ 
 
 </div>
 

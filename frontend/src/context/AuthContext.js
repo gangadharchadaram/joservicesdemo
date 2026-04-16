@@ -6,6 +6,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]); // dummy users
 
+  
+
   useEffect(() => {
   const saved = localStorage.getItem("user");
   if (saved) setUser(JSON.parse(saved));
