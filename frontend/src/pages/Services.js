@@ -1,157 +1,186 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Star, Clock, ArrowRight } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { serviceCategories, services } from '../mockData';
+import React, { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import * as LucideIcons from 'lucide-react';
+import { Star, MapPin, Heart } from "lucide-react";
+import { services, serviceCategories } from "../mockData";
+import { useNavigate } from "react-router-dom";
 
 const Services = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(null);
-const [searchParams] = useSearchParams();
-const categoryId = searchParams.get("category");
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-const filteredServices = useMemo(() => {
-  let filtered = services;
+  const [keyword, setKeyword] = useState(searchParams.get("search") || "");
+  const [category, setCategory] = useState(searchParams.get("category") || "");
 
-  // category from URL
-  if (categoryId) {
-    filtered = filtered.filter(
-      (service) => service.categoryId === parseInt(categoryId)
-    );
-  }
+  const filteredServices = useMemo(() => {
+    let filtered = services;
 
-  // category button filter
-  if (selectedCategory) {
-    filtered = filtered.filter(
-      (service) => service.categoryId === selectedCategory
-    );
-  }
+    if (keyword) {
+      filtered = filtered.filter((s) =>
+        s.name.toLowerCase().includes(keyword.toLowerCase())
+      );
+    }
 
-  // search filter
-  if (searchQuery) {
-    filtered = filtered.filter((service) =>
-      service.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }
+    if (category) {
+      filtered = filtered.filter(
+        (s) => s.categoryId === parseInt(category)
+      );
+    }
 
-  return filtered;
-}, [searchQuery, selectedCategory, categoryId]);
-  const getCategoryName = (categoryId) => {
-    return serviceCategories.find(cat => cat.id === categoryId)?.name || '';
-  };
+    return filtered;
+  }, [keyword, category]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Our Services</h1>
-          <p className="text-xl text-gray-600">Professional home services at your fingertips</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] via-white to-blue-50 py-10">
+      <div className="max-w-7xl mx-auto px-4 flex gap-8">
 
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            <Input
-              type="text"
-              placeholder="Search for services..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-14 backdrop-blur-lg bg-white/80 border-blue-200 focus:border-blue-400 shadow-lg"
+        {/* ================= SIDEBAR ================= */}
+        <div className="w-[280px] sticky top-24 h-fit">
+
+          <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+
+            <h3 className="font-semibold mb-4 text-gray-800">Search</h3>
+
+            <input
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="Search services..."
+              className="w-full border rounded-xl px-3 py-2 mb-5 focus:ring-2 focus:ring-blue-500"
+            />
+
+            <h3 className="font-semibold mb-3 text-gray-800">Category</h3>
+
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full border rounded-xl px-3 py-2 mb-5"
+            >
+              <option value="">All Categories</option>
+              {serviceCategories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
+            <h3 className="font-semibold mb-3 text-gray-800">Location</h3>
+            <input
+              placeholder="Hyderabad"
+              className="w-full border rounded-xl px-3 py-2"
             />
           </div>
         </div>
 
-        {/* Category Filter */}
-        <div className="mb-12">
-          <div className="flex flex-wrap gap-3 justify-center">
-            <Button
-              onClick={() => setSelectedCategory(null)}
-              variant={selectedCategory === null ? 'default' : 'outline'}
-              className={selectedCategory === null 
-                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
-                : 'border-blue-200 hover:bg-blue-50 hover:border-blue-300'
-              }
-            >
-              All Services
-            </Button>
-            {serviceCategories.map((category) => {
-              const IconComponent = LucideIcons[category.icon];
-              return (
-                <Button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  variant={selectedCategory === category.id ? 'default' : 'outline'}
-                  className={selectedCategory === category.id 
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
-                    : 'border-blue-200 hover:bg-blue-50 hover:border-blue-300'
-                  }
-                >
-                  {IconComponent && <IconComponent className="h-4 w-4 mr-2" />}
-                  {category.name}
-                </Button>
-              );
-            })}
-          </div>
-        </div>
+        {/* ================= MAIN ================= */}
+        <div className="flex-1">
 
-        {/* Services Grid */}
-        {filteredServices.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* TOP BAR */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-gray-600 text-sm">
+              Showing <span className="font-semibold">{filteredServices.length}</span> services
+            </h2>
+
+            <select className="border rounded-xl px-4 py-2 bg-white shadow-sm">
+              <option>Sort by</option>
+              <option>Top Rated</option>
+              <option>Price Low → High</option>
+            </select>
+          </div>
+
+          {/* CARDS */}
+          <div className="space-y-6">
+
             {filteredServices.map((service) => (
-              <Card key={service.id} className="group backdrop-blur-xl bg-white/90 border border-blue-100 hover:border-blue-300 hover:shadow-2xl transition-all duration-300">
-                <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg mb-2 group-hover:text-blue-600 transition-colors">
-                        {service.name}
-                      </CardTitle>
-                      <div className="text-sm text-gray-500 mb-3">
-                        {getCategoryName(service.categoryId)}
+              <div
+                key={service.id}
+                className="group bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-300 flex overflow-hidden border border-gray-100 hover:border-blue-200"
+              >
+
+                {/* IMAGE */}
+                <div className="relative w-[240px] h-[200px] overflow-hidden">
+                  <img
+                    src={service.image}
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  />
+
+                  {/* BADGE */}
+                  <div className="absolute top-3 left-3 bg-blue-600 text-white text-xs px-3 py-1 rounded-full shadow">
+                    Top Rated
+                  </div>
+                </div>
+
+                {/* CONTENT */}
+                <div className="flex-1 p-6 flex flex-col justify-between">
+
+                  {/* HEADER */}
+                  <div>
+                    <div className="flex justify-between items-start">
+
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-800 group-hover:text-blue-600 transition">
+                          {service.name}
+                        </h3>
+
+                        <div className="flex items-center text-gray-500 text-sm mt-1">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          Hyderabad
+                        </div>
+                      </div>
+
+                      {/* FAVORITE */}
+                      <button className="p-2 rounded-full hover:bg-gray-100">
+                        <Heart className="w-5 h-5 text-gray-400 hover:text-red-500" />
+                      </button>
+                    </div>
+
+                    {/* RATING */}
+                    <div className="flex items-center mt-3 gap-2">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className="w-4 h-4 text-yellow-400 fill-yellow-400"
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-600">(120 reviews)</span>
+                    </div>
+
+                    {/* DESCRIPTION */}
+                    <p className="text-gray-600 text-sm mt-3 max-w-lg">
+                      Professional service with trained experts. Quick response and guaranteed satisfaction.
+                    </p>
+                  </div>
+
+                  {/* FOOTER */}
+                  <div className="flex justify-between items-center mt-5">
+
+                    <div>
+                      <div className="text-2xl font-bold text-blue-600">
+                        ₹{service.price}
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        Starting price
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-medium text-gray-900">{service.rating}</span>
-                      <span className="text-sm text-gray-500">({service.reviews})</span>
-                    </div>
-                    <div className="flex items-center space-x-1 text-gray-500">
-                      <Clock className="h-4 w-4" />
-                      <span className="text-sm">{service.duration}</span>
-                    </div>
+
+                   <button
+  onClick={() => navigate(`/service/${service.id}`)}
+  className="bg-blue-600 text-white px-6 py-2.5 rounded-xl 
+  hover:bg-blue-700 transition shadow-md hover:shadow-lg"
+>
+  Book Now
+</button>
+
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-blue-100">
-                    <div>
-                      <div className="text-2xl font-bold text-blue-600">₹{service.price}</div>
-                    </div>
-                    <Link to={`/service/${service.id}`}>
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
-                        Book Now <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </CardHeader>
-              </Card>
+                </div>
+
+              </div>
             ))}
+
           </div>
-        ) : (
-          <div className="text-center py-20">
-            <div className="backdrop-blur-xl bg-white/80 rounded-3xl p-12 max-w-md mx-auto border border-blue-100">
-              <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2">No services found</h3>
-              <p className="text-gray-600">Try adjusting your search or filters</p>
-            </div>
-          </div>
-        )}
+
+        </div>
       </div>
     </div>
   );

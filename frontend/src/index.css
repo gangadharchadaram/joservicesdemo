@@ -133,3 +133,12 @@ to { transform: rotate(360deg); }
 .animate-spin-slow {
 animation: spin-slow 12s linear infinite;
 }
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}

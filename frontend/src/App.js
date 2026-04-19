@@ -9,7 +9,7 @@ import { BookingProvider } from "@/context/BookingContext";
 import { Toaster } from "@/components/ui/toaster";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
+import { useLocation } from "react-router-dom";
 import Home from "@/pages/Home";
 import Services from "@/pages/Services";
 import ServiceDetails from "@/pages/ServiceDetails";
@@ -25,12 +25,12 @@ import { NotificationProvider } from "./context/NotificationContext";
 /* ✅ INNER ROUTES COMPONENT */
 function AppRoutes() {
   const { user } = useAuth();
-
-  return (
+  const location = useLocation();
+  const isHome = location.pathname === "/";  return (
     <div className="App">
       <Navbar />
 
-      <main className="main-content">
+      <main className={`${!isHome ? "pt-20" : ""}`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, CheckCircle2, Search, Calendar, UserCheck } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -11,6 +11,13 @@ import { services } from "../mockData";
 import { useNavigate } from "react-router-dom";
 import * as Icons from "lucide-react";
 import { ClipboardList, User, Lightbulb } from "lucide-react";
+import logo from '../components/images/WhatsApp_Image_2026-04-12_at_7.52.00_AM-removebg-preview.png'
+
+import {
+  Scissors,
+  Brush,
+  Wind,
+} from "lucide-react";
 
 
 import {
@@ -30,6 +37,29 @@ const navigate = useNavigate();
 const [showProviderSignup, setShowProviderSignup] = useState(false);
 const [providerStep, setProviderStep] = useState(1);
 
+const servicesList = [
+  { name: "InstaHelp", icon: Sparkles, time: "50 mins", id: 1 },
+  { name: "Salon", icon: Scissors, time: "45 mins", id: 2 },
+  { name: "Grooming", icon: User, time: "44 mins", id: 3 },
+  { name: "Cleaning", icon: Brush, id: 4 },
+  { name: "AC Repair", icon: Wind, time: "45 mins", id: 5 },
+  { name: "Water", icon: Droplets, id: 6 },
+  { name: "Electrician", icon: Zap, time: "25 mins", id: 7 },
+  { name: "Painting", icon: Paintbrush, id: 8 },
+  { name: "Carpenter", icon: Hammer, id: 9 }
+];
+
+const [offsetY, setOffsetY] = useState(0);
+
+useEffect(() => {
+  const handleScroll = () => setOffsetY(window.scrollY);
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
+
+
+
 const iconMap = {
 Wrench,
 Zap,
@@ -44,13 +74,8 @@ Settings
 const handleSearch = (value) => {
   setSearch(value);
 
-  if (value.trim() === "") {
-    setResults([]);
-    return;
-  }
-
-  const filtered = services.filter(service =>
-    service.name.toLowerCase().includes(value.toLowerCase())
+  const filtered = servicesList.filter(s =>
+    s.toLowerCase().includes(value.toLowerCase())
   );
 
   setResults(filtered);
@@ -59,84 +84,159 @@ const handleSearch = (value) => {
   return (
     <div className="min-h-screen">
      {/* Hero Section */}
-<section className="relative w-full h-[650px] overflow-hidden">
 
-  {/* BACKGROUND */}
-  <div className="absolute inset-0 flex">
+<section className="relative w-full h-[760px] overflow-hidden">
 
-    {/* LEFT SIDE */}
-    <div className="w-2/3 relative">
+  {/* ================= MAIN FLEX ================= */}
+  <div className="flex w-full h-full">
 
-      {/* images */}
-      <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
-        <img src="https://images.unsplash.com/photo-1525186402429-b4ff38bedbec" className="w-full h-full object-cover"/>
-        <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952" className="w-full h-full object-cover"/>
-        <img src="https://images.unsplash.com/photo-1560185127-6ed189bf02f4" className="w-full h-full object-cover"/>
-        <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e" className="w-full h-full object-cover"/>
+    {/* ================= LEFT SIDE ================= */}
+    <div className="w-[70%] relative overflow-hidden">
+
+      {/* Background Image */}
+      <img 
+        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/90 via-[#1e3a8a]/80 to-transparent"></div>
+
+      {/* Content */}
+      <div className="relative z-10 h-full flex items-center px-10 lg:px-20 text-white">
+        <div className="max-w-xl">
+
+          <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+            Home Services,
+            <br />
+            <span className="text-yellow-400">On Demand</span>
+          </h1>
+
+          <p className="mt-5 text-gray-200">
+            Book trusted professionals for cleaning, repairs, beauty & more.
+          </p>
+
+          {/* SEARCH */}
+          <div className="mt-6 flex bg-white rounded-xl overflow-hidden w-[420px]">
+            <input
+              placeholder="Search for 'AC repair', 'Plumbing'..."
+              className="flex-1 px-4 py-3 text-black outline-none"
+            />
+            <button className="bg-blue-600 text-white px-5">
+              Search
+            </button>
+          </div>
+
+          {/* TRUST */}
+          <div className="flex items-center gap-6 mt-6 text-sm text-gray-200">
+            <div>⭐ 4.8 Rating</div>
+            <div className="w-[1px] h-4 bg-gray-400"></div>
+            <div>10K+ Customers</div>
+          </div>
+
+          {/* CTA */}
+          <div className="mt-6 flex gap-4">
+            <button className="bg-yellow-400 text-black px-6 py-3 rounded-xl font-semibold">
+              Book Now
+            </button>
+            <button className="border border-white px-6 py-3 rounded-xl">
+              Explore
+            </button>
+          </div>
+
+        </div>
       </div>
 
-      {/* overlay */}
-      <div className="absolute inset-0 bg-blue-900/80"></div>
-
-      {/* text */}
-      <div className="relative z-10 flex flex-col justify-center h-full px-10 lg:px-20 text-white">
-
-        <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-          Hire <span className="text-yellow-400">Experts</span> &
-          <br />
-          Get Your Job Done
-        </h1>
-
-        <div className="w-20 h-[3px] bg-yellow-400 mt-4 mb-6"></div>
-
-        <p className="text-gray-200 text-lg max-w-lg">
-          Find trusted professionals near you and get your job done quickly.
-        </p>
-
-      </div>
-    </div>
-
-    {/* RIGHT SIDE */}
-    <div className="w-1/3 bg-white relative">
-
-      {/* curve */}
-      <div className="absolute -left-24 top-0 w-[220px] h-full bg-white rounded-l-[120px]"></div>
+  {/* 🔥 RIGHT SIDE CURVE (MATCHES BOTTOM STYLE) */}
+<svg
+  className="absolute right-[-1px] top-0 h-full w-[220px] z-20"
+  viewBox="0 0 220 800"
+  preserveAspectRatio="none"
+>
+  <path
+    d="
+      M0,0 
+      C120,120 120,280 60,400 
+      C0,520 0,680 120,800 
+      L220,800 
+      L220,0 
+      Z
+    "
+    fill="white"
+  />
+</svg>
 
     </div>
+
+    {/* ================= RIGHT SIDE ================= */}
+ <div className="w-[30%] relative flex items-center justify-center px-6">
+
+  {/* 🔥 BACKGROUND LAYER (IMPORTANT) */}
+  <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-100"></div>
+
+  {/* 🔥 GLASS CARD */}
+  <div className="
+    relative
+    backdrop-blur-xl bg-white/30 
+    border border-white/40 
+    shadow-2xl 
+    rounded-3xl 
+    p-6 mr-16 w-full max-w-[360px]
+  ">
+
+    <h3 className="text-lg font-semibold text-gray-800 mb-5">
+      What are you looking for?
+    </h3>
+
+    <div className="grid grid-cols-3 gap-4">
+
+      {servicesList.map((item, i) => {
+        const Icon = item.icon;
+
+        return (
+          <div
+            key={i}
+            onClick={() => navigate(`/services?category=${item.id}`)}
+            className="
+              group
+              backdrop-blur-md bg-white/40
+              border border-white/30
+              rounded-xl p-4 text-center
+              cursor-pointer transition
+              hover:bg-white/60 hover:scale-105
+            "
+          >
+
+            {/* ICON */}
+            <div className="flex justify-center mb-2">
+              <Icon className="w-6 h-6 text-blue-600" />
+            </div>
+
+            {/* TIME */}
+            {item.time && (
+              <div className="text-[10px] bg-green-100 text-green-600 px-2 py-[2px] rounded-full inline-block mb-1">
+                {item.time}
+              </div>
+            )}
+
+            {/* NAME */}
+            <div className="text-xs text-gray-800 font-medium">
+              {item.name}
+            </div>
+
+          </div>
+        );
+      })}
+
+    </div>
+
+  </div>
+</div>
+
   </div>
 
-  {/* FORM */}
-  <div className="absolute right-[6%] top-1/2 -translate-y-1/2 z-20">
-
-    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[320px]">
-
-      <div className="mb-4">
-        <label className="text-sm text-gray-600">Keyword</label>
-        <input className="w-full mt-1 border rounded-lg px-4 py-3" />
-      </div>
-
-      <div className="mb-4">
-        <label className="text-sm text-gray-600">Category</label>
-        <select className="w-full mt-1 border rounded-lg px-4 py-3">
-          <option>Select Category</option>
-        </select>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <input placeholder="Country" className="border rounded-lg px-3 py-2"/>
-        <input placeholder="City" className="border rounded-lg px-3 py-2"/>
-      </div>
-
-      <button className="w-full bg-yellow-400 py-3 rounded-lg font-semibold hover:bg-yellow-500">
-        🔍 Find Provider
-      </button>
-
-    </div>
-
-  </div>
-
-  {/* BOTTOM CURVE */}
-  <div className="absolute bottom-0 w-full">
+  {/* 🔥 BOTTOM CURVE */}
+  <div className="absolute bottom-0 left-0 w-full">
     <svg viewBox="0 0 1440 150" className="w-full">
       <path
         fill="#ffffff"
@@ -217,24 +317,41 @@ const handleSearch = (value) => {
     <div className="grid lg:grid-cols-3 gap-8">
 
       {/* LEFT CARD */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border relative overflow-hidden">
+    {/* LEFT CARD */}
+<div className="bg-white rounded-3xl p-6 shadow-sm border relative overflow-hidden">
 
-        <h3 className="text-xl font-semibold mb-2">
-          Get matched
-          <br/> with local pros
-        </h3>
+  <h3 className="text-xl font-semibold mb-2">
+    Get matched
+    <br /> with local pros
+  </h3>
 
-        <p className="text-gray-500 text-sm mb-6">
-          for your next home project.
-        </p>
+  <p className="text-gray-500 text-sm mb-6">
+    for your next home project.
+  </p>
 
-        <img
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
-          className="w-full mt-6"
-        />
+  <img
+    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+    className="w-full mt-6 rounded-xl"
+  />
 
-        <div className="absolute bottom-0 right-0 w-60 h-60 bg-blue-50 rounded-full -mr-20 -mb-20"/>
-      </div>
+  {/* 🔥 CURVE BACKGROUND */}
+  <div className="absolute bottom-0 right-0 w-60 h-60 rounded-full -mr-20 -mb-20 flex items-center justify-center">
+
+    {/* 🔥 INNER GLOW CIRCLE */}
+    <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-xl">
+
+      {/* 🔥 LOGO */}
+      <img
+        src={logo} // 👈 your imported logo
+        alt="logo"
+        className="w-46 h-16 object-contain"
+      />
+
+    </div>
+
+  </div>
+
+</div>
 
 
       {/* RIGHT LIST */}
